@@ -1,0 +1,48 @@
+{
+  "logo_url": "http://marx.automhr.com/crm_development/assets/images/marx-logo.png",
+  "project_name": "Weather App",
+  "month": "11/2023",
+  "supplier_number": "N.A.",
+  "consultant_name": "N.A.",
+  "contract_id": "N.A.",
+  "address": "N.A.",
+  "date_wise_tasks": [
+    {
+      "date": "17/11/2023",
+      "days": "17",
+      "total_hours": "19:45",
+      "tasks": [
+        {
+          "id": "10",
+          "name": "API Registration",
+          "description": "Register for a API key from a weather service provider (e.g., OpenWeatherMap).",
+          "hours": "119:14"
+        },
+        {
+          "id": "9",
+          "name": "API Integration",
+          "description": "Use JavaScript to make an asynchronous request to the weather API using the user's input (city name).\nParse the JSON response from the API to extract relevant weather information.",
+          "hours": "0:0"
+        },
+        {
+          "id": "8",
+          "name": "API Registration",
+          "description": "Register for a API key from a weather service provider (e.g., OpenWeatherMap).",
+          "hours": "0:1"
+        },
+        {
+          "id": "7",
+          "name": "API Registration",
+          "description": "Register for a API key from a weather service provider (e.g., OpenWeatherMap).",
+          "hours": "0:0"
+        }
+      ],
+      "days_worked": "1"
+    }
+  ],
+  "total_hours": "119:15",
+  "total_days_worked": 1,
+  "confirmation_date": "30-11-2023",
+  "display_label": "N.A.",
+  "display_value": "N.A."
+}
