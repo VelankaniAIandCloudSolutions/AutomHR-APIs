@@ -9,6 +9,9 @@ import calendar
 from openpyxl.styles import Font
 from openpyxl.utils import range_boundaries
 from openpyxl.styles import Border, Side
+import os 
+from flask import send_file
+
 app = Flask(__name__)
 
 
@@ -16,7 +19,7 @@ app = Flask(__name__)
 font_size_14 = Font(name='Arial', size=14)
 font_size_10 = Font(name='Arial', size=10)
 
-@app.route('/generate_report', methods=['POST'])
+@app.route('/api/v1/generate_report', methods=['POST'])
 def generate_report():
     data = request.json
     header_fill = PatternFill(start_color="C0C0C0", end_color="C0C0C0", fill_type="solid")
@@ -244,9 +247,13 @@ def generate_report():
 
 
     file_name = 'project_report.xlsx'
-    wb.save(file_name)
+    file_path = os.path.join(os.getcwd(), file_name)
+    wb.save(file_path)
     
-    return jsonify({"message": "Excel report generated successfully", "file_name": file_name})
+    return jsonify({"message": "Excel report generated successfully", "file_url": f"{request.host_url}download_report/{file_name}"})
 
+@app.route('/api/v1/download_report/<filename>', methods=['GET'])
+def download_report(filename):
+    return send_file(filename, as_attachment=True)
 if __name__ == '__main__':
     app.run(debug=True)
