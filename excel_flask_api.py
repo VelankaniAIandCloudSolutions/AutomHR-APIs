@@ -26,7 +26,7 @@ def generate_report():
                             top=Side(style='thick', color='000000'),
                             bottom=Side(style='thick', color='000000'))
 
-    light_red_border = Border(left=Side(style='thin', color='000000'),
+    light_black_border = Border(left=Side(style='thin', color='000000'),
                             right=Side(style='thin', color='000000'),
                             top=Side(style='thin', color='000000'),
                             bottom=Side(style='thin', color='000000'))
@@ -206,7 +206,6 @@ def generate_report():
 
         ws[f'E{row+2}'].fill = header_fill
         ws[f'E{row+2}'].border = thick_black_border
-    
 
     # Adding the confirmation area
     ws[f'C{row+5}'] = f'Confirmed / Date: {data["confirmation_date"]}'
@@ -227,14 +226,6 @@ def generate_report():
     for cell_ref in header_cells:
         ws[cell_ref].border = thick_black_border
 
-
-
-
-                    
-    # bottom_row_cells = [cell for cell in ws.iter_rows(min_row=row, max_row=row, min_col=2, max_col=4)][0]
-    # for cell in bottom_row_cells:
-    #     cell.border = Border(bottom=thick_side)
-        
     for row_item in range(19, row + 1):
         ws[f'B{row_item}'].border = Border(left=thick_side,bottom=thin_side,right=thin_side,top=thin_side)      
         ws[f'C{row_item}'].border = Border(left=thin_side,bottom=thin_side,right=thin_side,top=thin_side)       
@@ -251,21 +242,6 @@ def generate_report():
                 ws[f'D{row_item}'].border = Border(left=thin_side, bottom=thick_side, right=thin_side, top=thin_side)
                 ws[f'E{row_item}'].border = Border(left=thin_side,bottom=thick_side,right=thick_side,top=thin_side)
 
-    # for row_num in range(19, row+1):
-    #     ws[f'B{row_num}'].border = thin_red_bottom_border
-    #     ws[f'C{row_num}'].border = light_red_border
-    #     ws[f'D{row_num}'].border = thin_red_bottom_border
-    #     print(f'B{row_num} and D{row_num} border applied')
-
-    # ws[f'B{row}'].border = Border(left=thick_side)      
-    # ws[f'D{row}'].border = Border(right=thick_side)
-    # ws[f'B49'].border = Border(left=thick_side)      
-    # ws[f'D49'].border = Border(right=thick_side)
-
-    # for row_num in range(row, row+1):
-    #     for col_letter in ['B', 'C', 'D']:
-    #         cell = ws[f'{col_letter}{row_num}']
-    #         cell.border =  Border(bottom=thick_side)
 
     file_name = 'project_report.xlsx'
     wb.save(file_name)
