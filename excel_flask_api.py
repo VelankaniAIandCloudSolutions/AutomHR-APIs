@@ -250,7 +250,7 @@ def generate_report():
     file_path = os.path.join(os.getcwd(), file_name)
     wb.save(file_path)
     
-    return jsonify({"message": "Excel report generated successfully", "file_url": f"{request.host_url}download_report/{file_name}"})
+    return jsonify({"message": "Excel report generated successfully", "file_url": f"{request.host_url}api/v1/download_report/{file_name}"})
 
 @app.route('/api/v1/download_report/<filename>', methods=['GET'])
 def download_report(filename):
