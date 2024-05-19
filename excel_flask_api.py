@@ -304,9 +304,9 @@ def generate_timesheet_report():
             os.makedirs(pdf_folder_path)
         pdf_file_path = os.path.join(pdf_folder_path, f"{unique_filename}.pdf")
         pdf_file_path = excel_to_pdf(excel_file_path,pdf_file_path)
-        file_url = f"{request.host_url}api/v1/download_report/{unique_filename}_filled.pdf"
+        file_url = f"https://api.automhr.com/api/v1/download_report/{unique_filename}_filled.pdf"
     else:
-        file_url = f"{request.host_url}api/v1/download_report/{unique_filename}.xlsx"
+        file_url = f"https://api.automhr.com/api/v1/download_report/{unique_filename}.xlsx"
 
     return jsonify({"message": "Excel report generated successfully", "file_url": file_url})
 
