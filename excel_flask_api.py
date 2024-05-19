@@ -319,5 +319,9 @@ def download_timesheet_pdf(filename):
     else:
         return "File not found", 404
     
+@app.route('/api/v1/test', methods=['GET'])
+def test_api():
+    return jsonify({"message": "Test Successfull"})
+    
 if __name__ == '__main__':
     app.run(debug=True)
