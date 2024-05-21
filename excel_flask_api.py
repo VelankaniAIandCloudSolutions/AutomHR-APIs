@@ -17,8 +17,23 @@ from spire.pdf import *
 from spire.xls import Workbook as SpireWorkbook, FileFormat
 from spire.xls.common import *
 import fitz # PyMuPDF
+import logging
+from logging.handlers import RotatingFileHandler
+
 
 app = Flask(__name__)
+
+# Set up logging
+log_file_path = os.path.join(os.getcwd(), 'app.log')
+handler = RotatingFileHandler(log_file_path, maxBytes=100000, backupCount=3)
+handler.setLevel(logging.ERROR)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+
+# Get the logger for your application
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.ERROR)
+logger.addHandler(handler)
 
 def excel_to_pdf(excel_file_path, pdf_file_path):
     workbook = SpireWorkbook()
@@ -311,16 +326,21 @@ def generate_timesheet_report():
 
         return jsonify({"message": "Excel report generated successfully", "file_url": file_url})
     except Exception as e:
+        logger.error("Error generating project report: %s", str(e))
         return jsonify({"message": "Error generating report", "error": str(e)})
     
 @app.route('/api/v1/download_report/<filename>', methods=['GET'])
 def download_timesheet_pdf(filename):
-    static_dir = os.path.join(app.root_path, 'static')
-    file_path = os.path.join(static_dir, filename)
-    if os.path.isfile(file_path):
-        return send_from_directory(static_dir, filename)
-    else:
-        return "File not found", 404
+    try:
+        static_dir = os.path.join(app.root_path, 'static')
+        file_path = os.path.join(static_dir, filename)
+        if os.path.isfile(file_path):
+            return send_from_directory(static_dir, filename)
+        else:
+            return "File not found", 404
+    except Exception as e:
+        logger.error("Error downloading timesheet PDF: %s", str(e))
+        return jsonify({'error': 'Failed to download timesheet PDF', 'message': str(e)}), 500
     
 @app.route('/api/v1/test', methods=['GET'])
 def test_api():
