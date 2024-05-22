@@ -161,12 +161,16 @@ def generate_timesheet_report():
         ws['B18'] = 'Days'
         ws['B18'].font = Font(bold=True, name='Arial', size=10)
         ws['B18'].fill = header_fill
+        ws['B18'].alignment = Alignment(horizontal='center', vertical='center')
         ws['C18'] = 'Tasks'
         ws['C18'].font = Font(bold=True, name='Arial', size=10)
         ws['C18'].fill = header_fill
+        ws['C18'].alignment = Alignment(horizontal='center', vertical='center')
         ws['D18'] = 'Hours'
         ws['D18'].font = Font(bold=True, name='Arial', size=10)
         ws['D18'].fill = header_fill
+        ws['D18'].alignment = Alignment(horizontal='center', vertical='center')
+        
 
         if 'total_days_worked' in data and data['total_days_worked'] != 0:
             ws['E18'] = 'Days Worked'
