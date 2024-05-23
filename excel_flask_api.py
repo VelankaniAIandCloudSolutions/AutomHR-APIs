@@ -291,7 +291,7 @@ def generate_timesheet_report():
 
             row += 1
 
-        ws[f'C{row+2}'] = 'Summe (in h)'
+        ws[f'C{row+2}'] = 'Total Hours (in h)'
         ws[f'C{row+2}'].alignment = Alignment(
             horizontal='right', vertical='center')
         ws[f'C{row+2}'].font = Font(bold=True, name='Arial', size=11)
@@ -303,6 +303,16 @@ def generate_timesheet_report():
 
         ws[f'D{row+2}'].fill = header_fill
         ws[f'D{row+2}'].border = thick_black_border
+
+        ws[f'C{row+3}'] = 'Total Days'
+
+        if 'total_working_days' in data and data['total_working_days'] != 0:
+            ws[f'D{row+3}'] = data['total_working_days']
+            ws[f'D{row+3}'].font = Font(bold=True, name='Arial', size=11)
+            ws[f'D{row+3}'].alignment = Alignment(
+                horizontal='center', vertical='center')
+            ws[f'D{row+3}'].fill = header_fill
+            ws[f'D{row+3}'].border = thick_black_border
 
         if 'total_days_worked' in data and data['total_days_worked'] != 0:
 
