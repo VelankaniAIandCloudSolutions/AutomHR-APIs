@@ -305,7 +305,7 @@ def generate_timesheet_report():
         ws[f'D{row+2}'].border = thick_black_border
 
 
-        if 'total_working_days' in data and data['total_working_days'] != 0:
+        if 'total_working_days' in data:
             ws[f'C{row+3}'] = 'Total Days'
             ws[f'C{row+3}'].alignment = Alignment(horizontal='right', vertical='center')
             ws[f'C{row+3}'].font = Font(bold=True, name='Arial', size=11)
