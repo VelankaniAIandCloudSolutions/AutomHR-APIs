@@ -329,10 +329,10 @@ def generate_timesheet_report():
         ws[f'C{row+5}'].font = Font(name='Arial', size=10)
 
         if (data["display_value"] == 'N.A.'):
-            ws[f'C{row+6}'] = f'Name (Please Block Letters): {data["display_label"]}'
+            ws[f'C{row+6}'] = f'Name ( {data["display_label"]})'
             ws[f'C{row+6}'].font = Font(bold=True, name='Arial', size=10)
         else:
-            ws[f'C{row+6}'] = f'Name (Please Block Letters): {data["display_label"]} {data["display_value"]}'
+            ws[f'C{row+6}'] = f'Name ( {data["display_label"]}): {data["display_value"]}'
             ws[f'C{row+6}'].font = Font(bold=True, name='Arial', size=10)
 
         if 'total_days_worked' in data and data['total_days_worked'] != 0:
