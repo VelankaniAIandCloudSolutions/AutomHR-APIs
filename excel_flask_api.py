@@ -214,7 +214,8 @@ def generate_timesheet_report():
 
         # Parse the month from the request data (assuming the month format is 'mm/yy')
         weekend_fill_color = "E7E6E6"
-        holiday_fill_color = "ADD8E6"
+        # holiday_fill_color = "ADD8E6"
+        holiday_fill_color = "B4C7E7"
 
         holidays = {holiday['holiday_date']: holiday for holiday in data.get(
             'holiday_details', [])}
