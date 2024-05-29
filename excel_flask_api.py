@@ -214,6 +214,10 @@ def generate_timesheet_report():
 
         # Parse the month from the request data (assuming the month format is 'mm/yy')
         weekend_fill_color = "E7E6E6"
+        holiday_fill_color = "ADD8E6"
+
+        holidays = {holiday['holiday_date']: holiday for holiday in data.get(
+            'holiday_details', [])}
 
         month, year = map(int, data['month'].split('/'))
         num_days_in_month = calendar.monthrange(year, month)[1]
@@ -230,6 +234,12 @@ def generate_timesheet_report():
             weekday = calendar.weekday(year, month, day)
             # Saturday and Sunday are represented by 5 and 6 respectively in calendar module
             is_weekend = weekday >= 5
+
+            date_str = f"{year:04d}-{month:02d}-{day:02d}"
+            is_holiday = date_str in holidays
+
+            if is_holiday:
+                holiday_info = holidays[date_str]
 
             if tasks_for_day:
                 # Fill in data for the day if there are tasks
@@ -268,6 +278,21 @@ def generate_timesheet_report():
                     ws[f'E{row}'].alignment = Alignment(
                         horizontal='center', vertical='center')
 
+            elif is_holiday:
+                ws[f'B{row}'] = day
+                ws[f'B{row}'].font = Font(bold=True, name='Arial', size=10)
+                ws[f'B{row}'].alignment = Alignment(
+                    horizontal='center', vertical='center')
+                ws[f'C{row}'] = f"{holiday_info['off_type'].capitalize()} - {holiday_info['off_reason']}"
+                ws[f'C{row}'].alignment = Alignment(wrapText=True)
+                ws[f'D{row}'] = None
+                if 'total_days_worked' in data and data['total_days_worked'] != 0:
+                    ws[f'E{row}'] = None
+
+                for col in 'BCD':
+                    ws[f'{col}{row}'].fill = PatternFill(
+                        start_color=holiday_fill_color, end_color=holiday_fill_color, fill_type="solid")
+
             else:
                 # Fill in the day even if there are no tasks
                 ws[f'B{row}'] = day
@@ -304,10 +329,10 @@ def generate_timesheet_report():
         ws[f'D{row+2}'].fill = header_fill
         ws[f'D{row+2}'].border = thick_black_border
 
-
         if 'total_working_days' in data:
             ws[f'C{row+3}'] = 'Total Days'
-            ws[f'C{row+3}'].alignment = Alignment(horizontal='right', vertical='center')
+            ws[f'C{row+3}'].alignment = Alignment(
+                horizontal='right', vertical='center')
             ws[f'C{row+3}'].font = Font(bold=True, name='Arial', size=11)
             ws[f'D{row+3}'] = data['total_working_days']
             ws[f'D{row+3}'].font = Font(bold=True, name='Arial', size=11)
