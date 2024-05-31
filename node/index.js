@@ -4,10 +4,10 @@ const moment = require("moment");
 
 // Database connection configuration
 const dbConfig = {
-  host: "your-database-host",
-  user: "your-database-user",
-  password: "your-database-password",
-  database: "your-database-name",
+  host: "localhost",
+  user: "root",
+  password: "Velankanidb@2123",
+  database: "marx_db",
 };
 
 // Email configuration
@@ -43,11 +43,11 @@ async function checkTimesheets() {
   try {
     const [users] = await connection.execute("SELECT * FROM tblstaff");
     const currentMonth = moment().format("YYYY-MM");
-
+    console.log(users[0])
     for (let user of users) {
       const [projects] = await connection.execute(
         "SELECT * FROM tblproject_members WHERE staff_id = ?",
-        [user.id]
+        [user.staffid]
       );
 
       for (let project of projects) {
@@ -55,7 +55,7 @@ async function checkTimesheets() {
           "SELECT t.* FROM tbltasks t " +
             "INNER JOIN tbltask_assigned ta ON t.id = ta.task_id " +
             "WHERE t.rel_id = ? AND t.rel_type = ? AND ta.staffid = ?",
-          [project.id, "project", user.id]
+          [project.id, "project", user.staffid]
         );
 
         let hasActiveTimer = false;
