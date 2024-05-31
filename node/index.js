@@ -40,8 +40,22 @@ async function sendLogInReminder() {
   const connection = await mysql.createConnection(dbConfig);
   try {
     const [users] = await connection.execute(
-      "SELECT * FROM tblstaff WHERE status_work = ?",
-      ["working"]
+      "SELECT * FROM tblstaff WHERE status_work = ? AND staff_identifi NOT IN (?)",
+      [
+        "working",
+        [
+          "ME092",
+          "ME048",
+          "ME054",
+          "ME055",
+          "ME070",
+          "ME071",
+          "ME072",
+          "ME079",
+          "ME087",
+          "ME089",
+        ],
+      ]
     );
     // const users = [{ email: "sharmaps112000@gmail.com", firstname: "Pranav" }];
     const subject = "Reminder: Log in to AutomHR";
