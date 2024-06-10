@@ -105,6 +105,7 @@ def excel_to_pdf(excel_file_path, pdf_file_path):
 def generate_timesheet_report():
     try:
         data = request.json
+        print('data', data)
         header_fill = PatternFill(
             start_color="C0C0C0", end_color="C0C0C0", fill_type="solid")
 
@@ -439,4 +440,4 @@ def test_api():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True,host='0.0.0.0')
