@@ -204,10 +204,10 @@ def generate_timesheet_report():
         ws['D18'].fill = header_fill
         ws['D18'].alignment = Alignment(horizontal='center', vertical='center')
 
-        if 'total_days_worked' in data and data['total_days_worked'] != 0:
-            ws['E18'] = 'Days Worked'
-            ws['E18'].font = Font(bold=True, name='Arial', size=10)
-            ws['E18'].fill = header_fill
+        # if 'total_days_worked' in data and data['total_days_worked'] != 0:
+        #     ws['E18'] = 'Days Worked'
+        #     ws['E18'].font = Font(bold=True, name='Arial', size=10)
+        #     ws['E18'].fill = header_fill
 
         # Populate date-wise tasks
         row = 19
@@ -263,10 +263,10 @@ def generate_timesheet_report():
                 ws[f'D{row}'].alignment = Alignment(
                     horizontal='center', vertical='center')
 
-                if 'total_days_worked' in data and data['total_days_worked'] != 0:
-                    ws[f'E{row}'] = tasks_for_day['days_worked']
-                    ws[f'E{row}'].alignment = Alignment(
-                        horizontal='center', vertical='center')
+                # if 'total_days_worked' in data and data['total_days_worked'] != 0:
+                #     ws[f'E{row}'] = tasks_for_day['days_worked']
+                #     ws[f'E{row}'].alignment = Alignment(
+                #         horizontal='center', vertical='center')
 
             else:
                 # Fill in the day even if there are no tasks
@@ -275,37 +275,38 @@ def generate_timesheet_report():
                 ws[f'B{row}'].alignment = Alignment(
                     horizontal='center', vertical='center')
                 ws[f'D{row}'] = None  # Leave hours blank
-                if 'total_days_worked' in data and data['total_days_worked'] != 0:
-                    ws[f'E{row}'] = 0
-                    ws[f'E{row}'].alignment = Alignment(
-                        horizontal='center', vertical='center')
+                # if 'total_days_worked' in data and data['total_days_worked'] != 0:
+                #     ws[f'E{row}'] = 0
+                #     ws[f'E{row}'].alignment = Alignment(
+                #         horizontal='center', vertical='center')
 
             # Set background color for weekends with no tasks
             if not tasks_for_day and is_weekend:
                 for col in ['B', 'C', 'D']:
                     ws[f'{col}{row}'].fill = PatternFill(
                         start_color=weekend_fill_color, end_color=weekend_fill_color, fill_type="solid")
-                if 'total_days_worked' in data and data['total_days_worked'] != 0:
-                    ws[f'E{row}'].fill = PatternFill(
-                        start_color=weekend_fill_color, end_color=weekend_fill_color, fill_type="solid")
+                # if 'total_days_worked' in data and data['total_days_worked'] != 0:
+                #     ws[f'E{row}'].fill = PatternFill(
+                #         start_color=weekend_fill_color, end_color=weekend_fill_color, fill_type="solid")
 
             row += 1
 
-        ws[f'C{row+2}'] = 'Total Hours (in h)'
-        ws[f'C{row+2}'].alignment = Alignment(
-            horizontal='right', vertical='center')
-        ws[f'C{row+2}'].font = Font(bold=True, name='Arial', size=11)
+        if data['hour_display'] != 0:
+            ws[f'C{row+2}'] = 'Total Hours (in h)'
+            ws[f'C{row+2}'].alignment = Alignment(
+                horizontal='right', vertical='center')
+            ws[f'C{row+2}'].font = Font(bold=True, name='Arial', size=11)
 
-        ws[f'D{row+2}'] = data['total_hours']
-        ws[f'D{row+2}'].font = Font(bold=True, name='Arial', size=11)
-        ws[f'D{row+2}'].alignment = Alignment(
-            horizontal='center', vertical='center')
+            ws[f'D{row+2}'] = data['total_hours']
+            ws[f'D{row+2}'].font = Font(bold=True, name='Arial', size=11)
+            ws[f'D{row+2}'].alignment = Alignment(
+                horizontal='center', vertical='center')
 
-        ws[f'D{row+2}'].fill = header_fill
-        ws[f'D{row+2}'].border = thick_black_border
+            ws[f'D{row+2}'].fill = header_fill
+            ws[f'D{row+2}'].border = thick_black_border
 
 
-        if 'total_working_days' in data:
+        if data['day_display'] != 0 and 'total_working_days' in data:
             ws[f'C{row+3}'] = 'Total Days'
             ws[f'C{row+3}'].alignment = Alignment(horizontal='right', vertical='center')
             ws[f'C{row+3}'].font = Font(bold=True, name='Arial', size=11)
@@ -316,15 +317,15 @@ def generate_timesheet_report():
             ws[f'D{row+3}'].fill = header_fill
             ws[f'D{row+3}'].border = thick_black_border
 
-        if 'total_days_worked' in data and data['total_days_worked'] != 0:
+        # if 'total_days_worked' in data and data['total_days_worked'] != 0:
 
-            ws[f'E{row+2}'] = data['total_days_worked']
-            ws[f'E{row+2}'].font = Font(bold=True, name='Arial', size=11)
-            ws[f'E{row+2}'].alignment = Alignment(
-                horizontal='center', vertical='center')
+        #     ws[f'E{row+2}'] = data['total_days_worked']
+        #     ws[f'E{row+2}'].font = Font(bold=True, name='Arial', size=11)
+        #     ws[f'E{row+2}'].alignment = Alignment(
+        #         horizontal='center', vertical='center')
 
-            ws[f'E{row+2}'].fill = header_fill
-            ws[f'E{row+2}'].border = thick_black_border
+        #     ws[f'E{row+2}'].fill = header_fill
+        #     ws[f'E{row+2}'].border = thick_black_border
 
         # Adding the confirmation area
         ws[f'C{row+5}'] = f'Confirmed / Date: {data["confirmation_date"]}'
@@ -337,10 +338,11 @@ def generate_timesheet_report():
             ws[f'C{row+6}'] = f'Name ({data["display_label"]}): {data["display_value"]}'
             ws[f'C{row+6}'].font = Font(bold=True, name='Arial', size=10)
 
-        if 'total_days_worked' in data and data['total_days_worked'] != 0:
-            header_cells = ['B18', 'C18', 'D18', 'E18']
-        else:
-            header_cells = ['B18', 'C18', 'D18']
+        # if 'total_days_worked' in data and data['total_days_worked'] != 0:
+        #     header_cells = ['B18', 'C18', 'D18', 'E18']
+        # else:
+            # header_cells = ['B18', 'C18', 'D18']
+        header_cells = ['B18', 'C18', 'D18']
 
         for cell_ref in header_cells:
             ws[cell_ref].border = thick_black_border
@@ -352,11 +354,11 @@ def generate_timesheet_report():
                 left=thin_side, bottom=thin_side, right=thin_side, top=thin_side)
             ws[f'D{row_item}'].border = Border(
                 left=thin_side, bottom=thin_side, right=thick_side, top=thin_side)
-            if 'total_days_worked' in data and data['total_days_worked'] != 0:
-                ws[f'D{row_item}'].border = Border(
-                    left=thin_side, bottom=thin_side, right=thin_side, top=thin_side)
-                ws[f'E{row_item}'].border = Border(
-                    left=thin_side, bottom=thin_side, right=thick_side, top=thin_side)
+            # if 'total_days_worked' in data and data['total_days_worked'] != 0:
+            #     ws[f'D{row_item}'].border = Border(
+            #         left=thin_side, bottom=thin_side, right=thin_side, top=thin_side)
+            #     ws[f'E{row_item}'].border = Border(
+            #         left=thin_side, bottom=thin_side, right=thick_side, top=thin_side)
 
             if row_item == row:
                 ws[f'B{row_item}'].border = Border(
@@ -365,11 +367,11 @@ def generate_timesheet_report():
                     left=thin_side, bottom=thick_side, right=thin_side, top=thin_side)
                 ws[f'D{row_item}'].border = Border(
                     left=thin_side, bottom=thick_side, right=thick_side, top=thin_side)
-                if 'total_days_worked' in data and data['total_days_worked'] != 0:
-                    ws[f'D{row_item}'].border = Border(
-                        left=thin_side, bottom=thick_side, right=thin_side, top=thin_side)
-                    ws[f'E{row_item}'].border = Border(
-                        left=thin_side, bottom=thick_side, right=thick_side, top=thin_side)
+                # if 'total_days_worked' in data and data['total_days_worked'] != 0:
+                #     ws[f'D{row_item}'].border = Border(
+                #         left=thin_side, bottom=thick_side, right=thin_side, top=thin_side)
+                #     ws[f'E{row_item}'].border = Border(
+                #         left=thin_side, bottom=thick_side, right=thick_side, top=thin_side)
 
         timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
         consultant_name = data['consultant_name'].replace(" ", "_")

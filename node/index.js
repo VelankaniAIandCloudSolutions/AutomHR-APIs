@@ -4,11 +4,12 @@ const moment = require("moment");
 const cron = require("node-cron");
 
 const dbConfig = {
-  host: "localhost",
-  user: "root",
+  host: "192.168.10.200",
+  user: "ubuntu",
   password: "Velankanidb@2123",
   database: "marx_db",
 };
+const connection = mysql.createConnection(dbConfig);
 
 const transporter = nodemailer.createTransport({
   host: "smtpout.secureserver.net",
@@ -130,9 +131,9 @@ async function checkTimesheets() {
   if (currentDate.date() > currentDate.daysInMonth() - 2) {
     currentMonth = currentDate.format("YYYY-MM");
   } else if (currentDate.date() <= 2) {
-    currentMonth = currentDate.subtract(1, 'month').format("YYYY-MM");
+    currentMonth = currentDate.subtract(1, "month").format("YYYY-MM");
   } else {
-    console.log('Not within the specified date range for timesheet checking.');
+    console.log("Not within the specified date range for timesheet checking.");
     return;
   }
   console.log("Checking timesheets for:", currentMonth);
@@ -140,51 +141,70 @@ async function checkTimesheets() {
   const connection = await mysql.createConnection(dbConfig);
 
   try {
-    const [users] = await connection.execute("SELECT * FROM tblstaff WHERE status_work = ?",["working"]);
+    const [users] = await connection.execute(
+      "SELECT * FROM tblstaff WHERE status_work = ?",
+      ["working"]
+    );
     // const [users] = await connection.execute("SELECT * FROM tblstaff WHERE status_work = ? AND staffid = ?",["working",67]);
 
-    await Promise.all(users.map(async (user) => {
-      const [projects] = await connection.execute(`
+    await Promise.all(
+      users.map(async (user) => {
+        const [projects] = await connection.execute(
+          `
         SELECT pm.*, p.name AS project_name
         FROM tblproject_members pm
         INNER JOIN tblprojects p ON pm.project_id = p.id
         WHERE pm.staff_id = ?
-      `, [user.staffid]);
+      `,
+          [user.staffid]
+        );
 
-      await Promise.all(projects.map(async (project) => {
-        const [tasks] = await connection.execute(`
+        await Promise.all(
+          projects.map(async (project) => {
+            const [tasks] = await connection.execute(
+              `
           SELECT t.*, ta.staffid AS assigned_staff_id
           FROM tbltasks t
           INNER JOIN tbltask_assigned ta ON t.id = ta.taskid
           WHERE t.rel_id = ? AND t.rel_type = ? AND ta.staffid = ?
-        `, [project.project_id, "project", user.staffid]);
+        `,
+              [project.project_id, "project", user.staffid]
+            );
 
-        let hasActiveTimer = false;
-        for (let task of tasks) {
-          const [taskTimers] = await connection.execute(`
+            let hasActiveTimer = false;
+            for (let task of tasks) {
+              const [taskTimers] = await connection.execute(
+                `
             SELECT 1
             FROM tbltaskstimers
             WHERE task_id = ? AND DATE_FORMAT(FROM_UNIXTIME(start_time), '%Y-%m') = ?
             LIMIT 1
-          `, [task.id, currentMonth]);
+          `,
+                [task.id, currentMonth]
+              );
 
-          if (taskTimers.length > 0) {
-            hasActiveTimer = true;
-            break;
-          }
-        }
+              if (taskTimers.length > 0) {
+                hasActiveTimer = true;
+                break;
+              }
+            }
 
-        if (tasks.length > 0 && hasActiveTimer) {
-          const [timesheet] = await connection.execute(`
+            if (tasks.length > 0 && hasActiveTimer) {
+              const [timesheet] = await connection.execute(
+                `
             SELECT 1
             FROM tbltime_sheet_approval
             WHERE staff_id = ? AND project_ids = ? AND DATE_FORMAT(created_at, '%Y-%m') = ? AND status != "2" AND teamlead_status != "2"
             LIMIT 1
-          `, [user.staffid, project.project_id, currentMonth]);
+          `,
+                [user.staffid, project.project_id, currentMonth]
+              );
 
-          if (timesheet.length === 0) {
-            const subject = `Missing Timesheet for the project ${project.project_name} for the month of ${currentDate.format("MMMM, YYYY")}`;
-            const html = `
+              if (timesheet.length === 0) {
+                const subject = `Missing Timesheet for the project ${
+                  project.project_name
+                } for the month of ${currentDate.format("MMMM, YYYY")}`;
+                const html = `
               <html>
               <head>
                 <style>
@@ -227,7 +247,11 @@ async function checkTimesheets() {
                   </div>
                   <div class="email-body">
                     <p>Dear ${user?.firstname},</p>
-                    <p>This is a friendly reminder to submit your Timesheet for the project <strong> ${project.project_name} </strong> for the month of <strong>${currentDate.format("MMMM, YYYY")}</strong> on AutomHR.</p>
+                    <p>This is a friendly reminder to submit your Timesheet for the project <strong> ${
+                      project.project_name
+                    } </strong> for the month of <strong>${currentDate.format(
+                  "MMMM, YYYY"
+                )}</strong> on AutomHR.</p>
                     <p>Kindly follow the link below to submit the timesheet.</p>
                     <p>Please ignore if all timesheets are submitted and approved.</p>
                     <a href="https://marx.automhr.com/admin/staff/timesheets?view=all class="email-button">Submit Timesheet</a>
@@ -239,11 +263,13 @@ async function checkTimesheets() {
               </body>
               </html>
             `;
-            await sendEmail(user.email, subject, html);
-          }
-        }
-      }));
-    }));
+                await sendEmail(user.email, subject, html);
+              }
+            }
+          })
+        );
+      })
+    );
   } catch (error) {
     console.error("Error checking timesheets:", error);
   } finally {
